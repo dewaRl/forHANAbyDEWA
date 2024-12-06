@@ -1,310 +1,543 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puzzle Cinta</title>
+    <title>Happy Birthday!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff4d8c;
-            --primary-hover: #ff3377;
-            --background: linear-gradient(135deg, #ffe6ee 0%, #ffb3cc 100%);
-            --text: #333;
+            --primary-color: #d84368;
+            --secondary-color: #fad0c4;
+            --text-color: #333;
+            --bg-gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        [data-theme="dark"] {
+            --primary-color: #ff7eb3;
+            --secondary-color: #2c1810;
+            --text-color: #fff;
+            --bg-gradient: linear-gradient(135deg, #2c1810 0%, #1a1a1a 100%);
+            --card-bg: rgba(28, 28, 28, 0.9);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
-            background: var(--background);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             overflow-x: hidden;
+            transition: all 0.5s ease;
         }
 
-        .container {
-            max-width: 600px;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        .title {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #666;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card-bg);
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            font-size: 1rem;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
+            box-shadow: var(--shadow);
             transition: all 0.3s ease;
-            margin: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .header {
+            padding: 40px 20px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
             position: relative;
             overflow: hidden;
         }
 
-        .btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 77, 140, 0.3);
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
         }
 
-        .modal {
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            color: var(--primary-color);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInDown 1s ease;
+        }
+
+        .gift-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .gift {
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            animation: float 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .gift:hover {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .message-box {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transform-origin: center;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .message-box.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding: 30px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .surprise-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .surprise-btn:hover {
+            transform: scale(1.1);
+            background: #ff5b84;
+        }
+
+        .falling-element {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            animation: fall linear forwards;
+            top: -20px; /* Start above the viewport */
+            left: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg);
+            }
+        }
+
+        .lightbox-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            cursor: zoom-out;
+        }
+
+        .lightbox-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
         }
 
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            max-width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: modalEnter 0.3s ease-out;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            color: var(--text);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            animation: toastEnter 0.5s ease-out;
-            text-align: center;
-            min-width: 300px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes toastEnter {
-            from { opacity: 0; transform: translate(-50%, 20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
-        @keyframes modalEnter {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @media (max-width: 600px) {
-            .container { padding: 1rem; }
-            .title { font-size: 2rem; }
-            .modal-content { max-width: 95%; margin: 10px; }
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            transform-origin: center;
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="welcome-screen" class="screen active">
-            <h1 class="title">Puzzle Cinta</h1>
-            <p class="subtitle">Selamat datang di perjalanan cinta kita! Mari mulai puzzle ini.</p>
-            <button class="btn primary" onclick="startGame()">
-                <span class="heart-icon">❤️</span>
-                Mulai Permainan
-            </button>
-        </div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
 
-        <div id="puzzle-screen" class="screen">
-            <h2>Level 1: Pertanyaan Cinta</h2>
-            <p class="subtitle">btw bubub sayangg aku ga?</p>
-            <div class="quiz-options">
-                <button class="btn" onclick="handleAnswer('!yes')">!yes</button>
-                <button class="btn" onclick="handleAnswer('!no')">!no</button>
-            </div>
-        </div>
-
-        <div id="quiz-screen" class="screen">
-            <h2>Level 2: Pertanyaan Cinta</h2>
-            <p>Apa warna kesukaanku?</p>
-            <div class="quiz-options">
-                <button class="btn" onclick="checkAnswer('pink', true)">Jinga dejek</button>
-                <button class="btn" onclick="checkAnswer('blue', false)">Biru viking</button>
-                <button class="btn" onclick="checkAnswer('green', false)">hijau bonek</button>
-            </div>
-        </div>
-
-        <div id="word-screen" class="screen">
-            <h2>Level 3: Kata-kata Cinta</h2>
-            <p>dewa sayang hana karena ____</p>
-            <div class="word-options">
-                <button class="btn" onclick="selectWord('senyumanmu')">imoett</button>
-                <button class="btn" onclick="selectWord('caramu bicara')">sigmaa pisann</button>
-                <button class="btn" onclick="selectWord('masakanmu')">botollyakult</button>
-                <button class="btn" onclick="selectWord('semuanya')">semuanya</button>
-            </div>
-        </div>
-
-        <div id="gift-screen" class="screen">
-            <h2>Hadiah Spesial</h2>
-            <p>Selamat! Kamu berhasil menyelesaikan Puzzle Cinta. Klik kotak ini untuk membuka kejutan.</p>
-            <button class="gift-box" onclick="openGift()">
-                <span class="gift-icon">🎁</span>
-                <span>Buka Hadiah</span>
-            </button>
-        </div>
+    <div class="header">
+        <h1>HAPPY BIRTHDAY SAYANG</h1>
+        <p>You make every day special. Today is all about you! 🎉</p>
     </div>
 
-    <div id="love-letter" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeLoveLetter()">&times;</span>
-            <div class="letter-content"></div>
-        </div>
+    <div class="gift-container">
+        <div class="gift" onclick="showMessage('May your day be filled with endless joy and laughter!')">🎁</div>
+        <div class="gift" onclick="showMessage('You deserve all the happiness in the world!')">🎂</div>
+        <div class="gift" onclick="showMessage('Thank you for being the amazing person you are!')">💝</div>
+        <div class="gift" onclick="showMessage('Wishing you a year filled with beautiful moments!')">✨</div>
     </div>
 
-    <div id="floating-hearts"></div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <div class="message-box" id="message-box">
+        <p id="message-text"></p>
+    </div>
+
+    <
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(this)">
+            <img src="IMG_4366.jpeg" alt="Gallery Image">
+        </div>
+    </div>
     <script>
-        let currentStep = 'welcome';
-        let yesClickCount = 0;
-
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(screenId + '-screen').classList.add('active');
-            currentStep = screenId;
+        function openLightbox(element) {
+            alert("Lightbox is not implemented yet!");
         }
-
-        function startGame() {
-            showScreen('puzzle');
-            createConfetti();
+    </script>
+</body>
+</html>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
-
-        function handleAnswer(answer) {
-            if (answer === '!yes') {
-                yesClickCount++;
-                if (yesClickCount === 1) {
-                    showToast("Wahh kirain kamu pinter ngoding/pemrograman sepertiku! 😄", 2000);
-                } else {
-                    showToast("!yes bukan berarti yes sungguhan dalam pemrograman. !yes = false = no 😉", 2000);
-                }
-            } else if (answer === '!no') {
-                createConfetti();
-                showScreen('quiz');
-                showToast('bubub benar! Dalam pemrograman, !no berarti yes! 💖', 2000);
-            }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(this)">
+            <img src="IMG_3112.jpeg" alt="Gallery Image">
+        </div>
+    </div>
+    <script>
+        function openLightbox(element) {
+            alert("Lightbox is not implemented yet!");
         }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(this)">
+            <img src="IMG_5299.jpeg" alt="Gallery Image">
+        </div>
+    </div>
+    <script>
+        function openLightbox(element) {
+            alert("Lightbox is not implemented yet!");
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(this)">
+            <img src="IMG_5314.jpeg" alt="Gallery Image">
+        </div>
+    </div>
+    <script>
+        function openLightbox(element) {
+            alert("Lightbox is not implemented yet!");
+        }
+    </script>
+</body>
+</html>
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        .gallery-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(this)">
+            <img src="IMG_5313.jpeg" alt="Memory 3">
+        </div>
+    </div>
+    <script>
+        function openLightbox(element) {
+            alert("Lightbox is not implemented yet!");
+        }
+    </script>
+</body>
+</html>
+        </div>
+        </div>
 
-        function showToast(message, duration = 3000) {
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
+    <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Enlarged photo">
+        </div>
+    </div>
 
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
+    <button class="surprise-btn" onclick="startSurprise()">Click for a Surprise! 🎉</button>
 
+    <div class="footer">
+        Made with by dewarffl🥶
+    </div>
+
+    <script>
+        let currentScale = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
+        function showMessage(message) {
+            const messageBox = document.getElementById('message-box');
+            const messageText = document.getElementById('message-text');
+            
+            messageText.textContent = message;
+            messageBox.classList.add('show');
+            
             setTimeout(() => {
-                toast.style.animation = 'toastEnter 0.5s ease-out reverse';
-                setTimeout(() => {
-                    toast.remove();
-                }, 500);
-            }, duration);
+                messageBox.classList.remove('show');
+            }, 3000);
         }
 
-        function createConfetti() {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        }
-
-        function checkAnswer(answer, isCorrect) {
-            if (isCorrect) {
-                createConfetti();
-                showScreen('word');
-                showToast('Jawaban yang tepat! 💖');
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.querySelector('.theme-toggle');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                toggle.textContent = '🌙';
             } else {
-                showToast('Coba lagi ya! 💝', 'error');
+                body.setAttribute('data-theme', 'dark');
+                toggle.textContent = '☀';
             }
         }
 
-        function selectWord(word) {
-            if (word === 'semuanya') {
-                createConfetti();
-                showScreen('gift');
-                showToast('Ya! dewa cinta hana karena semuanya. Kamu sempurna! 💖');
-            } else {
-                showToast('Hmm... coba pilih yang lain! 💝', 'info');
-            }
+        function openLightbox(element) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const img = element.querySelector('img');
+            
+            lightboxImg.src = img.src;
+            lightbox.style.display = 'block';
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            updateImageTransform();
         }
 
-        function openGift() {
-            createConfetti();
-            document.getElementById('love-letter').style.display = 'flex';
-            document.querySelector('.letter-content').textContent = LOVE_LETTER_CONTENT;
+        function updateImageTransform() {
+            const img = document.getElementById('lightbox-img');
+            img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
         }
 
-        function closeLoveLetter() {
-            document.getElementById('love-letter').style.display = 'none';
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
         }
 
-        const LOVE_LETTER_CONTENT = `hallo sayang, 
-        aku cuma mau bilang betapa bersyukurnya aku memiliki kamu🥺,dan tetap jadi versi terbaik dirimu😍.aku merasa hadiah yang terindah itu kamu⁉️🫶🏻 makasii banget udah menerima aku apaadanya🥰,karena kamu sudah memilih aku, meski aku jauh dari sempurna. Kamu adalah alasan aku ingin jadi lebih baik🙌🏻,aku akan selalu berusaha jadi orang yang membuatmu bahagia seperti kamu membuatku❤️‍🩹.Kadang aku masih nggak percaya, kok bisa ya aku punya cewek secantik bububb?🤩, makasi bubb karena selalu ada untukku🙇🏻. makasii juga sudah mencintaiku dengan caramu💞
-[dewa syang hana]`;
+        document.getElementById('lightbox-img').addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY * -0.01;
+            currentScale = Math.min(Math.max(0.5, currentScale + delta), 5);
+            updateImageTransform();
+        });
+
+        document.getElementById('lightbox-img').addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateImageTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        function createFallingElement(type) {
+            const element = document.createElement('div');
+            element.className = 'falling-element';
+            
+            const isHeart = type === 'heart';
+            element.innerHTML = isHeart ? '❤️' : '🌸';
+            
+            const size = Math.random() * 20 + 10;
+            const startPositionLeft = Math.random() * window.innerWidth;
+            const duration = Math.random() * 3 + 2;
+            const delay = Math.random() * 5;
+            
+            element.style.cssText = `
+                left: ${startPositionLeft}px;
+                font-size: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+            `;
+            
+            document.body.appendChild(element);
+            
+            setTimeout(() => {
+                element.remove();
+            }, (duration + delay) * 1000);
+        }
+
+        function startSurprise() {
+            let elapsed = 0;
+            const interval = setInterval(() => {
+                for (let i = 0; i < 3; i++) {
+                    createFallingElement(Math.random() > 0.5 ? 'heart' : 'flower');
+                }
+                elapsed += 100;
+                if (elapsed >= 5000) clearInterval(interval);
+            }, 100);
+        }
     </script>
 </body>
 </html>
